@@ -15,7 +15,7 @@ server.on('request', (req, res) => {
     res.end('unknown message\n');
   }
 });
-
+// server.listen(port, [address], [callback])
 server.listen(() => {
   console.log('CoAP server started');
 });
