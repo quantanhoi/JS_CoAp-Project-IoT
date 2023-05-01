@@ -25,3 +25,13 @@ Run the compiled C++ Program:
 ./read_server_output
 ```
 Then you can input E then enter to send the message to the server on localhost
+
+```
+sudo apt-get update
+sudo apt-get install build-essential tk-dev libncurses5-dev libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev libexpat1-dev liblzma-dev zlib1g-dev libffi-dev
+wget https://www.python.org/ftp/python/3.10.2/Python-3.10.2.tgz
+tar -xvf Python-3.10.2.tgz
+cd Python-3.10.2
+
+
+```
