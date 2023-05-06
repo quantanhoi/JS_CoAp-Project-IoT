@@ -1,16 +1,14 @@
-/* minimal CoAP server
- *
- * Copyright (C) 2018-2023 Olaf Bergmann <bergmann@tzi.org>
- */
-
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
 
 #include "common.hh"
 
-int
-main(void) {
+int main(void) {
+
+  printf("server is up and running\n");
+  
+
   coap_context_t  *ctx = nullptr;
   coap_address_t dst;
   coap_resource_t *resource = nullptr;
@@ -34,17 +32,35 @@ main(void) {
   }
 
   resource = coap_resource_init(ruri, 0);
-  coap_register_handler(resource, COAP_REQUEST_GET,
+  coap_register_handler(resource, COAP_REQUEST_POST,
                         [](auto, auto,
                            const coap_pdu_t *request,
                            auto,
                            coap_pdu_t *response) {
+                          unsigned char buf[3];
                           coap_show_pdu(COAP_LOG_WARN, request);
                           coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTENT);
-                          coap_add_data(response, 5,
-                                        (const uint8_t *)"world");
+
+                          // Get the payload from the request
+                          const uint8_t *data;
+                          size_t data_len;
+                          coap_get_data(request, &data_len, &data);
+
+                          // Print the received message to the terminal
+                          printf("Received message from client: %.*s\n", (int)data_len, data);
+
+                          // Set Content-Format to text/plain
+                          coap_add_option(response, COAP_OPTION_CONTENT_FORMAT,
+                                          coap_encode_var_safe(buf, sizeof(buf),
+                                                               COAP_MEDIATYPE_TEXT_PLAIN),
+                                          buf);
+
+                          // Echo the message back to the client
+                          coap_add_data(response, data_len, data);
                           coap_show_pdu(COAP_LOG_WARN, response);
                         });
+
+
   coap_add_resource(ctx, resource);
 
   while (true) { coap_io_process(ctx, COAP_IO_WAIT); }
